@@ -1,3 +1,3 @@
 """BCHydro API"""
 
-from .api import BCHydroApi
+from bchydro.api import BCHydroApi
