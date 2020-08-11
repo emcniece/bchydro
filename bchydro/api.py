@@ -144,9 +144,7 @@ class BCHydroApi:
                 )
 
                 self.usage = BCHydroDailyUsage(
-                    electricity = new_usage,
-                    rates = self.rates,
-                    account = self.account
+                    electricity=new_usage, rates=self.rates, account=self.account
                 )
 
             except ET.ParseError as e:

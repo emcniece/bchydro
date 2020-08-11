@@ -40,17 +40,6 @@ class BCHydroDailyElectricity:
         self.cost = cost
 
 
-class BCHydroDailyUsage:
-    def __init__(self,
-        electricity: List[BCHydroDailyElectricity],
-        rates: BCHydroRates,
-        account: BCHydroAccount
-    ):
-        self.electricity = electricity
-        self.rates = rates
-        self.account = account
-
-
 # Account details returned from the account JSON response.
 # Only used fields are stored.
 class BCHydroAccount:
@@ -83,3 +72,15 @@ class BCHydroAccount:
         self.evpEstConsCurPeriod = evpEstConsCurPeriod
         self.evpEstCostCurPeriod = evpEstCostCurPeriod
         self.evpCurrentDateTime = evpCurrentDateTime
+
+
+class BCHydroDailyUsage:
+    def __init__(
+        self,
+        electricity: List[BCHydroDailyElectricity],
+        rates: BCHydroRates,
+        account: BCHydroAccount,
+    ):
+        self.electricity = electricity
+        self.rates = rates
+        self.account = account
