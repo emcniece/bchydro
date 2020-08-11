@@ -134,8 +134,6 @@ class BCHydroApi:
                         )
                     )
 
-                self.usage = BCHydroDailyUsage(new_usage)
-
                 rates = root.find("Rates")
                 self.rates = BCHydroRates(
                     rates.get("daysSince"),
@@ -143,6 +141,12 @@ class BCHydroApi:
                     rates.get("cost2date"),
                     rates.get("estCons"),
                     rates.get("estCost"),
+                )
+
+                self.usage = BCHydroDailyUsage(
+                    electricity = new_usage,
+                    rates = self.rates,
+                    account = self.account
                 )
 
             except ET.ParseError as e:

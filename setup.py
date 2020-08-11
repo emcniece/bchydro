@@ -3,7 +3,7 @@ from distutils.core import setup
 setup(
     name="bchydro",
     packages=["bchydro"],
-    version="0.2",
+    version="0.3",
     license="MIT",
     description="BCHydro API",
     author="Eric McNiece",

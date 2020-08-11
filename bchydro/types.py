@@ -41,8 +41,14 @@ class BCHydroDailyElectricity:
 
 
 class BCHydroDailyUsage:
-    def __init__(self, electricity: List[BCHydroDailyElectricity]):
+    def __init__(self,
+        electricity: List[BCHydroDailyElectricity],
+        rates: BCHydroRates,
+        account: BCHydroAccount
+    ):
         self.electricity = electricity
+        self.rates = rates
+        self.account = account
 
 
 # Account details returned from the account JSON response.
