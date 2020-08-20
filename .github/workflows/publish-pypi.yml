@@ -8,10 +8,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@master
-    - name: Set up Python 3.7
+    - name: Set up Python
       uses: actions/setup-python@v1
       with:
         python-version: 3.8
+    - name: Install build tools
+      run: pip install setuptools twine wheel --upgrade
     - name: Install reqs
       run: pip install -r requirements.txt
     - name: Build a dist package
