@@ -15,11 +15,10 @@ jobs:
     - name: Install reqs
       run: pip install -r requirements.txt
     - name: Build a dist package
-      run: python setup.py sdist
+      run: python setup.py sdist bdist_wheel
     - uses: actions/upload-artifact@v2
       with:
-        name: dist
-        path: ./dist/
+        path: ./dist/*.tar.gz
     - name: Publish a Python distribution to PyPI
       uses: pypa/gh-action-pypi-publish@master
       with:

@@ -81,6 +81,7 @@ class BCHydroApi:
                 )
 
             except Exception as e:
+                _LOGGER.debug(response.text())
                 _LOGGER.error("Auth error: %s", e)
                 return False
 

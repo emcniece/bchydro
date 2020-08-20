@@ -1,24 +1,21 @@
 from os import path
-from distutils.core import setup
-
-import sys
-from subprocess import Popen, PIPE
+from setuptools import setup
 import subprocess
 
-repo_url = 'https://github.com/emcniece/bchydro'
+repo_url = "https://github.com/emcniece/bchydro"
 
 # Fetch latest tag from Github
 cmd = f"git -c 'versionsort.suffix=-' ls-remote --tags --sort='v:refname' {repo_url} | tail -n 1 | cut -d'/' -f3-"
-ps = subprocess.Popen(cmd,shell=True,stdout=subprocess.PIPE,stderr=subprocess.STDOUT)
-latest_tag = ps.communicate()[0].decode('utf-8').strip()
+ps = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+latest_tag = ps.communicate()[0].decode("utf-8").strip()
 
 # Pull PyPi description from README.md
 pwd = path.abspath(path.dirname(__file__))
-with open(path.join(pwd, 'README.md'), encoding='utf-8') as f:
+with open(path.join(pwd, "README.md"), encoding="utf-8") as f:
     long_description = f.read()
 
 # Pull requirements from local repo
-with open(path.join(pwd, './requirements.txt'), encoding='utf-8') as f:
+with open(path.join(pwd, "./requirements.txt"), encoding="utf-8") as f:
     requirements = f.read().splitlines()
 
 setup(
@@ -27,12 +24,12 @@ setup(
     version=latest_tag,
     license="MIT",
     description="BCHydro API",
-    long_description_content_type='text/markdown',
+    long_description_content_type="text/markdown",
     long_description=long_description,
     author="Eric McNiece",
     author_email="emcniece@gmail.com",
     url=repo_url,
-    download_url="https://github.com/emcniece/bchydro/releases/latest/download/package.tar.gz",
+    download_url=f"{repo_url}/releases/latest/download/package.tar.gz",
     keywords=["bchydro"],
     install_requires=requirements,
     classifiers=[
