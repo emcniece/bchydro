@@ -1,6 +1,8 @@
 # BCHydro API
 
-🚧 Under construction
+![PyPi publish](https://github.com/emcniece/bchydro/workflows/Publish%20PyPi/badge.svg)
+
+BCHydro Python API for extracting electricity usage statistics from your personal account.
 
 ## Usage
 
