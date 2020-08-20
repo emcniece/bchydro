@@ -56,3 +56,4 @@ asyncio.run(main())
 ## Todo
 
 - [ ] Tests
+- [ ] Publish on release, not tag

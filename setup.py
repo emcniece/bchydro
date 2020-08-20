@@ -10,7 +10,7 @@ repo_url = 'https://github.com/emcniece/bchydro'
 # Fetch latest tag from Github
 cmd = f"git -c 'versionsort.suffix=-' ls-remote --tags --sort='v:refname' {repo_url} | tail -n 1 | cut -d'/' -f3-"
 ps = subprocess.Popen(cmd,shell=True,stdout=subprocess.PIPE,stderr=subprocess.STDOUT)
-latest_tag = ps.communicate()[0].decode('utf-8')
+latest_tag = ps.communicate()[0].decode('utf-8').strip()
 
 # Pull PyPi description from README.md
 pwd = path.abspath(path.dirname(__file__))
