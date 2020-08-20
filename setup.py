@@ -1,11 +1,18 @@
+from os import path
 from distutils.core import setup
+
+this_directory = path.abspath(path.dirname(__file__))
+with open(path.join(this_directory, 'README.md'), encoding='utf-8') as f:
+    long_description = f.read()
 
 setup(
     name="bchydro",
     packages=["bchydro"],
-    version="0.5",
+    version="0.6",
     license="MIT",
     description="BCHydro API",
+    long_description=long_description,
+    long_description_content_type='text/markdown',
     author="Eric McNiece",
     author_email="emcniece@gmail.com",
     url="https://github.com/emcniece/bchydro",

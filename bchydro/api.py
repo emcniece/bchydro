@@ -3,8 +3,6 @@ import logging
 import xml.etree.ElementTree as ET
 from bs4 import BeautifulSoup
 
-# from .types import BCHydroRates
-
 from .types import (
     BCHydroAccount,
     BCHydroInterval,
