@@ -102,6 +102,9 @@ class BCHydroApi:
         return True
 
     async def get_daily_usage(self) -> BCHydroDailyUsage:
+        return await self.get_usage(hourly=False)
+
+    async def get_usage(self, hourly = False) -> BCHydroDailyUsage:
         async with aiohttp.ClientSession(
             cookie_jar=self._cookie_jar, headers={"User-Agent": USER_AGENT}
         ) as session:
@@ -111,7 +114,7 @@ class BCHydroApi:
                     "Slid": self.account.evpSlid,
                     "Account": self.account.evpAccount,
                     "ChartType": "column",
-                    "Granularity": "daily",
+                    "Granularity": hourly and "hourly" or "daily",
                     "Overlays": "none",
                     "DateRange": "currentBill",
                     "StartDateTime": self.account.evpBillingStart,
