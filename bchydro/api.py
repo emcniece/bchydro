@@ -14,6 +14,8 @@ from .types import (
 from .const import (
     USER_AGENT,
     URL_POST_LOGIN,
+    URL_GET_ACCOUNTS,
+    URL_ACCOUNTS_OVERVIEW,
     URL_GET_ACCOUNT_JSON,
     URL_POST_CONSUMPTION_XML,
 )
@@ -54,6 +56,18 @@ class BCHydroApi:
             try:
                 soup = BeautifulSoup(text, features="html.parser")
                 self._bchydroparam = soup.find(id="bchydroparam").text
+                # If the user has multiple accounts (eg. after a move), pick the first open one
+                # todo: allow user to specify
+                accountListDivs = soup.find_all("div", class_="accountListDiv")
+                if len(accountListDivs) > 0:
+                    accounts_response = await session.post(URL_GET_ACCOUNTS, headers={'x-csrf-token': self._bchydroparam})
+                    accounts = await accounts_response.json()
+                    account_id = accounts['accounts'][0]['accountId']
+                    response = await session.get(URL_ACCOUNTS_OVERVIEW + "?aid=" + account_id)
+                    text = await response.text()
+                    soup = BeautifulSoup(text, features="html.parser")
+                    self._bchydroparam = soup.find(id="bchydroparam").text
+
             except AttributeError:
                 _LOGGER.error(
                     "Login failed - unable to find bchydroparam. Are your credentials set?"
@@ -81,7 +95,7 @@ class BCHydroApi:
                 )
 
             except Exception as e:
-                _LOGGER.debug(response.text())
+                _LOGGER.debug("Auth response text: %s", await response.text())
                 _LOGGER.error("Auth error: %s", e)
                 return False
 
