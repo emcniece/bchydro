@@ -43,7 +43,7 @@ async def main():
     a = BCHydroApi()
     await a.authenticate("username", "password")
 
-    usage = await a.get_daily_usage()
+    usage = await a.get_usage(hourly=False)
     print(usage.electricity)
     print(a.get_latest_point())
     print(a.get_latest_usage())

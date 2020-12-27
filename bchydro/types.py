@@ -23,6 +23,8 @@ class BCHydroInterval:
         self.start = start
         self.end = end
 
+    def __repr__(self):
+        return f"BCHydroInterval('{self.start}', '{self.end}')"
 
 class BCHydroDailyElectricity:
     def __init__(
@@ -38,6 +40,9 @@ class BCHydroDailyElectricity:
         self.consumption = consumption
         self.interval = interval
         self.cost = cost
+
+    def __repr__(self):
+        return f"BCHydroDailyElectricity('{self.type}', '{self.quality}', {self.consumption}, {self.interval}, {self.cost})"
 
 
 # Account details returned from the account JSON response.

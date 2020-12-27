@@ -55,22 +55,23 @@ class BCHydroApi:
 
             # Extract hydroparam from page HTML for use in the consumption endpoint.
             # The param appears twice: a hidden <input /> and a span with an id.
-            text = await response.text()
+            page_html = await response.text()
 
             try:
-                soup = BeautifulSoup(text, features="html.parser")
-                self._bchydroparam = soup.find(id="bchydroparam").text
+                soup = BeautifulSoup(page_html, features="html.parser")
+                self._bchydroparam = self.parse_bchydroparam(soup)
+
                 # If the user has multiple accounts (eg. after a move), pick the first open one
                 # todo: allow user to specify
-                accountListDivs = soup.find_all("div", class_="accountListDiv")
-                if len(accountListDivs) > 0:
+                account_list_divs = soup.find_all("div", class_="accountListDiv")
+                if len(account_list_divs) > 0:
                     accounts_response = await session.post(URL_GET_ACCOUNTS, headers={'x-csrf-token': self._bchydroparam})
                     accounts = await accounts_response.json()
                     account_id = accounts['accounts'][0]['accountId']
                     response = await session.get(URL_ACCOUNTS_OVERVIEW + "?aid=" + account_id)
-                    text = await response.text()
-                    soup = BeautifulSoup(text, features="html.parser")
-                    self._bchydroparam = soup.find(id="bchydroparam").text
+                    page_html = await response.text()
+                    soup = BeautifulSoup(page_html, features="html.parser")
+                    self._bchydroparam = self.parse_bchydroparam(soup)
 
             except AttributeError:
                 _LOGGER.error(
@@ -108,6 +109,15 @@ class BCHydroApi:
                 return False
 
         return True
+
+    def parse_bchydroparam(self, soup: BeautifulSoup) -> str:
+        span_element = soup.find(id="bchydroparam")
+        if span_element:
+            return span_element.text
+        input_element = soup.find('input', {'name': "bchydroparam"})
+        if input_element:
+            return input_element.get('value')
+        raise Exception('Unable to find bchydroparam; likely failed to login')
 
     async def get_daily_usage(self) -> BCHydroDailyUsage:
         return await self.get_usage(hourly=False)
