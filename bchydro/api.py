@@ -24,26 +24,30 @@ _LOGGER = logging.getLogger(__name__)
 
 
 class BCHydroApi:
-    def __init__(self):
+    def __init__(self, username, password):
         """Initialize the sensor."""
+        self._username = username
+        self._password = password
         self._cookie_jar = None
         self._bchydroparam = None
         self.account: BCHydroAccount = None
         self.usage: BCHydroDailyUsage = None
         self.rates: BCHydroRates = None
 
-    async def authenticate(self, username, password) -> bool:
+    async def authenticate(self) -> bool:
         async with aiohttp.ClientSession(headers={"User-Agent": USER_AGENT}) as session:
             response = await session.post(
                 URL_POST_LOGIN,
                 data={
                     "realm": "bch-ps",
-                    "email": username,
-                    "password": password,
+                    "email": self._username,
+                    "password": self._password,
                     "gotoUrl": "https://app.bchydro.com:443/BCHCustomerPortal/web/login.html",
                 },
             )
             response.raise_for_status()
+            _LOGGER.debug('history:', response.history)
+
             if response.status != 200:
                 return False
 
@@ -73,6 +77,10 @@ class BCHydroApi:
                     "Login failed - unable to find bchydroparam. Are your credentials set?"
                 )
                 raise
+
+            alert_errors = soup.find(True, {'class': ['alert', 'error']})
+            if alert_errors:
+                raise Exception("Detected login page error(s): " + alert_errors.text)
 
             try:
                 response = await session.get(URL_GET_ACCOUNT_JSON)
@@ -105,6 +113,10 @@ class BCHydroApi:
         return await self.get_usage(hourly=False)
 
     async def get_usage(self, hourly = False) -> BCHydroDailyUsage:
+        if not self.account:
+            _LOGGER.error("Unauthenticated")
+            raise Exception("Unauthenticated")
+
         async with aiohttp.ClientSession(
             cookie_jar=self._cookie_jar, headers={"User-Agent": USER_AGENT}
         ) as session:
@@ -165,6 +177,7 @@ class BCHydroApi:
 
             except ET.ParseError as e:
                 _LOGGER.error("Unable to parse XML from string: %s -- %s", e, text)
+                raise
             except Exception as e:
                 _LOGGER.error("Unexpected error: %s", e)
                 raise
@@ -175,17 +188,33 @@ class BCHydroApi:
         return point.quality == "ACTUAL"
 
     def get_latest_point(self) -> BCHydroDailyElectricity:
+        if not self.account:
+            _LOGGER.error("Unauthenticated")
+            return
+
         valid = list(filter(self.is_valid, self.usage.electricity))
         return valid[-1] if len(valid) else None
 
     def get_latest_interval(self) -> BCHydroInterval:
+        if not self.account:
+            _LOGGER.error("Unauthenticated")
+            return
+
         valid = list(filter(self.is_valid, self.usage.electricity))
         return valid[-1].interval if len(valid) else None
 
     def get_latest_usage(self):
+        if not self.account:
+            _LOGGER.error("Unauthenticated")
+            return
+
         valid = list(filter(self.is_valid, self.usage.electricity))
         return valid[-1].consumption if len(valid) else None
 
     def get_latest_cost(self):
+        if not self.account:
+            _LOGGER.error("Unauthenticated")
+            return
+
         valid = list(filter(self.is_valid, self.usage.electricity))
         return valid[-1].cost if len(valid) else None

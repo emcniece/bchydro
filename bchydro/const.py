@@ -1,7 +1,7 @@
 """BCHydro Constants"""
 
 # Customized user agent for getting the attention of BCHydro devs
-USER_AGENT = "https://github.com/emcniece/hass-bchydro#disclaimer"
+USER_AGENT = "https://github.com/emcniece/bchydro#disclaimer"
 
 # Main login page. Several redirects follow.
 URL_POST_LOGIN = "https://app.bchydro.com/sso/UI/Login"
