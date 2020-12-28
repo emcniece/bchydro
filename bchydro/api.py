@@ -14,6 +14,8 @@ from .types import (
 from .const import (
     USER_AGENT,
     URL_POST_LOGIN,
+    URL_GET_ACCOUNTS,
+    URL_ACCOUNTS_OVERVIEW,
     URL_GET_ACCOUNT_JSON,
     URL_POST_CONSUMPTION_XML,
 )
@@ -22,26 +24,30 @@ _LOGGER = logging.getLogger(__name__)
 
 
 class BCHydroApi:
-    def __init__(self):
+    def __init__(self, username, password):
         """Initialize the sensor."""
+        self._username = username
+        self._password = password
         self._cookie_jar = None
         self._bchydroparam = None
         self.account: BCHydroAccount = None
         self.usage: BCHydroDailyUsage = None
         self.rates: BCHydroRates = None
 
-    async def authenticate(self, username, password) -> bool:
+    async def authenticate(self) -> bool:
         async with aiohttp.ClientSession(headers={"User-Agent": USER_AGENT}) as session:
             response = await session.post(
                 URL_POST_LOGIN,
                 data={
                     "realm": "bch-ps",
-                    "email": username,
-                    "password": password,
+                    "email": self._username,
+                    "password": self._password,
                     "gotoUrl": "https://app.bchydro.com:443/BCHCustomerPortal/web/login.html",
                 },
             )
             response.raise_for_status()
+            _LOGGER.debug('history:', response.history)
+
             if response.status != 200:
                 return False
 
@@ -49,16 +55,33 @@ class BCHydroApi:
 
             # Extract hydroparam from page HTML for use in the consumption endpoint.
             # The param appears twice: a hidden <input /> and a span with an id.
-            text = await response.text()
+            page_html = await response.text()
 
             try:
-                soup = BeautifulSoup(text, features="html.parser")
-                self._bchydroparam = soup.find(id="bchydroparam").text
+                soup = BeautifulSoup(page_html, features="html.parser")
+                self._bchydroparam = self.parse_bchydroparam(soup)
+
+                # If the user has multiple accounts (eg. after a move), pick the first open one
+                # todo: allow user to specify
+                account_list_divs = soup.find_all("div", class_="accountListDiv")
+                if len(account_list_divs) > 0:
+                    accounts_response = await session.post(URL_GET_ACCOUNTS, headers={'x-csrf-token': self._bchydroparam})
+                    accounts = await accounts_response.json()
+                    account_id = accounts['accounts'][0]['accountId']
+                    response = await session.get(URL_ACCOUNTS_OVERVIEW + "?aid=" + account_id)
+                    page_html = await response.text()
+                    soup = BeautifulSoup(page_html, features="html.parser")
+                    self._bchydroparam = self.parse_bchydroparam(soup)
+
             except AttributeError:
                 _LOGGER.error(
                     "Login failed - unable to find bchydroparam. Are your credentials set?"
                 )
                 raise
+
+            alert_errors = soup.find(True, {'class': ['alert', 'error']})
+            if alert_errors:
+                raise Exception("Detected login page error(s): " + alert_errors.text)
 
             try:
                 response = await session.get(URL_GET_ACCOUNT_JSON)
@@ -81,13 +104,29 @@ class BCHydroApi:
                 )
 
             except Exception as e:
-                _LOGGER.debug(response.text())
+                _LOGGER.debug("Auth response text: %s", await response.text())
                 _LOGGER.error("Auth error: %s", e)
                 return False
 
         return True
 
+    def parse_bchydroparam(self, soup: BeautifulSoup) -> str:
+        span_element = soup.find(id="bchydroparam")
+        if span_element:
+            return span_element.text
+        input_element = soup.find('input', {'name': "bchydroparam"})
+        if input_element:
+            return input_element.get('value')
+        raise Exception('Unable to find bchydroparam; likely failed to login')
+
     async def get_daily_usage(self) -> BCHydroDailyUsage:
+        return await self.get_usage(hourly=False)
+
+    async def get_usage(self, hourly = False) -> BCHydroDailyUsage:
+        if not self.account:
+            _LOGGER.error("Unauthenticated")
+            raise Exception("Unauthenticated")
+
         async with aiohttp.ClientSession(
             cookie_jar=self._cookie_jar, headers={"User-Agent": USER_AGENT}
         ) as session:
@@ -97,7 +136,7 @@ class BCHydroApi:
                     "Slid": self.account.evpSlid,
                     "Account": self.account.evpAccount,
                     "ChartType": "column",
-                    "Granularity": "daily",
+                    "Granularity": hourly and "hourly" or "daily",
                     "Overlays": "none",
                     "DateRange": "currentBill",
                     "StartDateTime": self.account.evpBillingStart,
@@ -148,6 +187,7 @@ class BCHydroApi:
 
             except ET.ParseError as e:
                 _LOGGER.error("Unable to parse XML from string: %s -- %s", e, text)
+                raise
             except Exception as e:
                 _LOGGER.error("Unexpected error: %s", e)
                 raise
@@ -158,17 +198,33 @@ class BCHydroApi:
         return point.quality == "ACTUAL"
 
     def get_latest_point(self) -> BCHydroDailyElectricity:
+        if not self.account:
+            _LOGGER.error("Unauthenticated")
+            return
+
         valid = list(filter(self.is_valid, self.usage.electricity))
         return valid[-1] if len(valid) else None
 
     def get_latest_interval(self) -> BCHydroInterval:
+        if not self.account:
+            _LOGGER.error("Unauthenticated")
+            return
+
         valid = list(filter(self.is_valid, self.usage.electricity))
         return valid[-1].interval if len(valid) else None
 
     def get_latest_usage(self):
+        if not self.account:
+            _LOGGER.error("Unauthenticated")
+            return
+
         valid = list(filter(self.is_valid, self.usage.electricity))
         return valid[-1].consumption if len(valid) else None
 
     def get_latest_cost(self):
+        if not self.account:
+            _LOGGER.error("Unauthenticated")
+            return
+
         valid = list(filter(self.is_valid, self.usage.electricity))
         return valid[-1].cost if len(valid) else None

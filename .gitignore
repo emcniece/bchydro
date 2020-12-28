@@ -1,5 +1,6 @@
 __pycache__/
 .env
+venv/
 tmp/
 
 # Distribution / packaging
@@ -21,3 +22,6 @@ share/python-wheels/
 .installed.cfg
 *.egg
 MANIFEST
+
+.vscode/
+.idea/
