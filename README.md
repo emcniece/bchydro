@@ -1,6 +1,6 @@
 # BCHydro API
 
-![PyPi publish](https://github.com/emcniece/bchydro/workflows/Publish%20PyPi/badge.svg)
+![PyPi publish](https://github.com/emcniece/bchydro/workflows/Publish%20PyPi/badge.svg) ![PyPi version](https://img.shields.io/pypi/v/bchydro)
 
 BCHydro Python API for extracting electricity usage statistics from your personal account.
 
@@ -55,25 +55,18 @@ asyncio.run(main())
 BCHydro offers [view-only accounts](https://app.bchydro.com/BCHCustomerPortal/web/accountAccessView.html),
 as a more secure option.
 
+
+## Version Publishing
+
+This repo is automatically published to [PyPi](https://pypi.org/project/bchydro/) by means of a [Github Workflow](https://github.com/emcniece/bchydro/actions?query=workflow%3A%22Publish+PyPi%22) when a new [release](https://github.com/emcniece/bchydro/releases) is created on Github.
+
+
 ## Todo
 
-- [ ] Tests
-- [ ] Publish on release, not tag
-- [ ] Handle account locking?
-    ```html
-    <div id="alertMessage" class="alert error"><h3 class="icon">Sorry, your account is locked</h3></div>
-    <div>
-        <p>To ensure your account security, we've locked your account to prevent further attempts to log in.</p>
-        <p>You may try again after 5 minutes, or contact Customer Service.</p>
-        <p>
-            <a name="resetPassword" class="primary button" href="/BCHCustomerPortal/forgotPassword.html">Reset password</a>
-            <a name="returnToLogin" class="secondary button" href="/BCHCustomerPortal/web/login.html">Return to login</a>
-        </p>
-    </div>
-    </div>
+- [x] Publish on release, not tag
+- [x] Handle account locking (looks for HTML alert dialogs)
+- [ ] Unit tests
 
-    </div>
-    ```
 
 ## Disclaimer
 
