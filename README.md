@@ -1,6 +1,6 @@
 # BCHydro API
 
-![PyPi publish](https://github.com/emcniece/bchydro/workflows/Publish%20PyPi/badge.svg) ![PyPi version](https://img.shields.io/pypi/v/bchydro)
+[![PyPi publish](https://github.com/emcniece/bchydro/workflows/Publish%20PyPi/badge.svg)](https://github.com/emcniece/bchydro/actions?query=workflow%3A%22Publish+PyPi%22) [![PyPi version](https://img.shields.io/pypi/v/bchydro)](https://pypi.org/project/bchydro/) ![Tested Python versions](https://img.shields.io/pypi/pyversions/bchydro) ![PyPi downloads](https://img.shields.io/pypi/dm/bchydro) ![Dependency updates](https://img.shields.io/librariesio/github/emcniece/bchydro)
 
 BCHydro Python API for extracting electricity usage statistics from your personal account.
 
@@ -15,9 +15,14 @@ pip install bchydro
 Via Github:
 
 ```sh
+# Fetch the code
 git clone https://github.com/emcniece/bchydro.git
 cd bchydro
+
+# Set up environment
+
 pip install -r requirements.txt
+
 ```
 
 ## Usage
@@ -59,6 +64,19 @@ as a more secure option.
 ## Version Publishing
 
 This repo is automatically published to [PyPi](https://pypi.org/project/bchydro/) by means of a [Github Workflow](https://github.com/emcniece/bchydro/actions?query=workflow%3A%22Publish+PyPi%22) when a new [release](https://github.com/emcniece/bchydro/releases) is created on Github.
+
+
+### Maintenance
+
+Dependencies can be updated with [pip-tools](https://github.com/jazzband/pip-tools):
+
+```sh
+# Install pip-compile and pip-sync
+pip install pip-tools
+
+# Upgrade requirements
+pip-compile --upgrade
+```
 
 
 ## Todo
