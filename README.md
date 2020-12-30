@@ -1,6 +1,6 @@
 # BCHydro API
 
-[![PyPi publish](https://github.com/emcniece/bchydro/workflows/Publish%20PyPi/badge.svg)](https://github.com/emcniece/bchydro/actions?query=workflow%3A%22Publish+PyPi%22) [![PyPi version](https://img.shields.io/pypi/v/bchydro)](https://pypi.org/project/bchydro/) ![Tested Python versions](https://img.shields.io/pypi/pyversions/bchydro) ![PyPi downloads](https://img.shields.io/pypi/dm/bchydro) ![Dependency updates](https://img.shields.io/librariesio/github/emcniece/bchydro)
+[![PyPi version](https://img.shields.io/pypi/v/bchydro?logo=pypi&logoColor=lightgrey)](https://pypi.org/project/bchydro/) ![Tested Python versions](https://img.shields.io/pypi/pyversions/bchydro?logo=python&logoColor=lightgrey) [![PyPi publish](https://github.com/emcniece/bchydro/workflows/Publish%20PyPi/badge.svg)](https://github.com/emcniece/bchydro/actions?query=workflow%3A%22Publish+PyPi%22?event=release) ![PyPi downloads](https://img.shields.io/pypi/dm/bchydro) ![Dependency updates](https://img.shields.io/librariesio/github/emcniece/bchydro)
 
 BCHydro Python API for extracting electricity usage statistics from your personal account.
 
@@ -57,8 +57,13 @@ async def main():
 asyncio.run(main())
 ```
 
-BCHydro offers [view-only accounts](https://app.bchydro.com/BCHCustomerPortal/web/accountAccessView.html),
-as a more secure option.
+#### ⚠ Read-Only Account Sharing
+
+This project accesses your BCHydro account as would a human in a browser. It is recommended that a read-only account is set up for use with this project for more secure operation. Using this secondary account also enables backup access in the event of account lockout.
+
+- Instructions for adding read-only accounts can be [found here](https://www.bchydro.com/news/conservation/2014/myhydro-sharing-access.html).
+- Read-only accounts can be [configured here](https://app.bchydro.com/BCHCustomerPortal/web/accountAccessView.html) after logging in.
+
 
 
 ## Version Publishing
