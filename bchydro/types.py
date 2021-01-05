@@ -26,6 +26,7 @@ class BCHydroInterval:
     def __repr__(self):
         return f"BCHydroInterval('{self.start}', '{self.end}')"
 
+
 class BCHydroDailyElectricity:
     def __init__(
         self,

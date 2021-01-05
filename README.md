@@ -45,8 +45,7 @@ import asyncio
 from bchydro import BCHydroApi
 
 async def main():
-    a = BCHydroApi()
-    await a.authenticate("username", "password")
+    a = BCHydroApi("username", "password")
 
     usage = await a.get_usage(hourly=False)
     print(usage.electricity)
@@ -89,6 +88,9 @@ pip-compile --upgrade
 - [x] Publish on release, not tag
 - [x] Handle account locking (looks for HTML alert dialogs)
 - [ ] Unit tests
+- [x] Automatic initial and re-authentication
+- [x] Rate limiting, auth retries
+- [ ] Exception documentation
 
 
 ## Disclaimer
