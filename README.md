@@ -45,13 +45,22 @@ import asyncio
 from bchydro import BCHydroApi
 
 async def main():
-    a = BCHydroApi("username", "password")
+    bch = BCHydroApi("username", "password")
 
-    usage = await a.get_usage(hourly=False)
-    print(usage.electricity)
-    print(a.get_latest_point())
-    print(a.get_latest_usage())
-    print(a.get_latest_cost())
+    # Asynchronous usage:
+    print(await bch.get_usage())
+    print(await bch.get_latest_point())
+    print(await bch.get_latest_usage())
+    print(await bch.get_latest_interval())
+    print(await bch.get_latest_cost())
+
+    # Mostly synchronous usage:
+    await bch.refresh()
+    print(bch.usage)
+    print(bch.latest_point)
+    print(bch.latest_usage)
+    print(bch.latest_interval)
+    print(bch.latest_cost)
 
 asyncio.run(main())
 ```

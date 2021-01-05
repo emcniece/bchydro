@@ -1,6 +1,5 @@
 import os
 import asyncio
-import time
 from bchydro import BCHydroApi
 
 
