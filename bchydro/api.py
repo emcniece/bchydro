@@ -1,10 +1,17 @@
+import sys
 import aiohttp
 import logging
 from datetime import datetime, timedelta
 import xml.etree.ElementTree as ET
 from bs4 import BeautifulSoup
 from ratelimit import limits
-from tenacity import retry, stop_after_attempt, wait_fixed, retry_if_exception_type, TryAgain
+from tenacity import (
+    retry,
+    stop_after_attempt,
+    retry_if_exception_type,
+    wait_fixed,
+    TryAgain,
+)
 
 from .types import (
     BCHydroAccount,
@@ -17,9 +24,9 @@ from .types import (
 from .exceptions import (
     BCHydroAuthException,
     BCHydroParamException,
-    BCHydroInvalidHtmlException,
     BCHydroInvalidXmlException,
     BCHydroAlertDialogException,
+    BCHydroInvalidDataException,
 )
 
 from .const import (
@@ -33,7 +40,8 @@ from .const import (
     URL_POST_CONSUMPTION_XML,
 )
 
-# logging.basicConfig(level=logging.DEBUG)
+log_level = logging.DEBUG if "--debug" in sys.argv else logging.INFO
+logging.basicConfig(level=log_level)
 _LOGGER = logging.getLogger(__name__)
 
 
@@ -73,7 +81,6 @@ class BCHydroApi:
 
     def _validate_html_response(self, html) -> BeautifulSoup:
         soup = None
-
         try:
             soup = BeautifulSoup(html, features="html.parser")
             self._bchydroparam = self._parse_bchydroparam(soup)
@@ -110,15 +117,15 @@ class BCHydroApi:
             await self._authenticate()
             raise TryAgain
 
-    async def _refresh_if(self, condition, debug_msg=None):
+    async def _refresh_if(self, condition, debug_msg=None, hourly=False):
         if condition:
             if debug_msg is not None:
                 _LOGGER.debug(debug_msg)
 
-            await self.refresh()
-            raise TryAgain
+            await self.refresh(hourly=hourly)
 
-    @limits(calls=5, period=FIVE_MINUTES)
+
+    @limits(calls=3, period=FIVE_MINUTES)
     async def _authenticate(self) -> bool:
         _LOGGER.debug("authenticating with username: %s", self._username)
 
@@ -189,6 +196,7 @@ class BCHydroApi:
             return self.usage
 
         if not self.account:
+            _LOGGER.debug("Performing initial authentication")
             await self._authenticate()
 
         async with aiohttp.ClientSession(
@@ -281,16 +289,14 @@ class BCHydroApi:
     def _set_usage(self, usage):
         self.usage = usage
 
-    @retry(stop=stop_after_attempt(2))
-    async def get_usage(self) -> BCHydroDailyUsage:
-        await self._refresh_if(not self.usage)
+    async def get_usage(self, hourly=False) -> BCHydroDailyUsage:
+        await self._refresh_if(not self.usage, hourly=hourly)
         return self.usage
 
     def _set_latest_point(self, usage):
         valid_point = list(filter(self._is_valid_point, self.usage.electricity))
         self.latest_point = valid_point[-1] if len(valid_point) else None
 
-    @retry(stop=stop_after_attempt(2))
     async def get_latest_point(self) -> BCHydroDailyElectricity:
         await self._refresh_if(not self.latest_point)
         return self.latest_point
@@ -299,7 +305,6 @@ class BCHydroApi:
         valid_point = list(filter(self._is_valid_point, self.usage.electricity))
         self.latest_interval = valid_point[-1].interval if len(valid_point) else None
 
-    @retry(stop=stop_after_attempt(2))
     async def get_latest_interval(self) -> BCHydroInterval:
         await self._refresh_if(not self.latest_interval)
         return self.latest_interval
@@ -308,7 +313,6 @@ class BCHydroApi:
         valid_point = list(filter(self._is_valid_point, self.usage.electricity))
         self.latest_usage = valid_point[-1].consumption if len(valid_point) else None
 
-    @retry(stop=stop_after_attempt(2))
     async def get_latest_usage(self):
         await self._refresh_if(not self.latest_usage)
         return self.latest_usage
@@ -317,7 +321,6 @@ class BCHydroApi:
         valid_point = list(filter(self._is_valid_point, self.usage.electricity))
         self.latest_cost = valid_point[-1].cost if len(valid_point) else None
 
-    @retry(stop=stop_after_attempt(2))
     async def get_latest_cost(self):
         await self._refresh_if(not self.latest_cost)
         return self.latest_cost
