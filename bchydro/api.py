@@ -77,7 +77,7 @@ class BCHydroApi:
 
         try:
             soup = BeautifulSoup(html, features="html.parser")
-            alert_errors = soup.find(True, {"class": ["alert", "error"]})
+            alert_errors = soup.select('.alert.error:not(.hidden)')[0]
             self._bchydroparam = self._parse_bchydroparam(soup)
         except:
             raise BCHydroInvalidHtmlException()
