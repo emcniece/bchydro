@@ -73,19 +73,23 @@ class BCHydroApi:
 
     def _validate_html_response(self, html) -> BeautifulSoup:
         soup = None
-        alert_errors = None
 
         try:
             soup = BeautifulSoup(html, features="html.parser")
-            alert_errors = soup.select('.alert.error:not(.hidden)')[0]
             self._bchydroparam = self._parse_bchydroparam(soup)
         except:
             raise BCHydroInvalidHtmlException()
 
+        return soup
+
+    def _detect_alert_errors(self, soup: BeautifulSoup):
+        try:
+            alert_errors = soup.select('.alert.error:not(.hidden)')[0]
+        except TypeError:
+            raise BCHydroInvalidHtmlException()
+
         if alert_errors:
             raise BCHydroAlertDialogException(alert_errors.text)
-
-        return soup
 
     def _bust_cache(self):
         self._cache_expiration_time = datetime.now() + timedelta(
@@ -149,6 +153,8 @@ class BCHydroApi:
                 )
                 page_html = await response.text()
                 self._validate_html_response(page_html)
+
+            self._detect_alert_errors(soup)
 
             try:
                 response = await session.get(URL_GET_ACCOUNT_JSON)
