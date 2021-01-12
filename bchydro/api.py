@@ -4,7 +4,7 @@ from datetime import datetime, timedelta
 import xml.etree.ElementTree as ET
 from bs4 import BeautifulSoup
 from ratelimit import limits
-from tenacity import retry, stop_after_attempt, wait_fixed, TryAgain
+from tenacity import retry, stop_after_attempt, wait_fixed, retry_if_exception_type, TryAgain
 
 from .types import (
     BCHydroAccount,
@@ -84,12 +84,12 @@ class BCHydroApi:
 
     def _detect_alert_errors(self, soup: BeautifulSoup):
         try:
-            alert_errors = soup.select('.alert.error:not(.hidden)')[0]
+            alert_errors = soup.select('.alert.error:not(.hidden)')
         except TypeError:
             raise BCHydroInvalidHtmlException()
 
-        if alert_errors:
-            raise BCHydroAlertDialogException(alert_errors.text)
+        if len(alert_errors):
+            raise BCHydroAlertDialogException(alert_errors[0].text)
 
     def _bust_cache(self):
         self._cache_expiration_time = datetime.now() + timedelta(
@@ -182,7 +182,7 @@ class BCHydroApi:
 
         return True
 
-    @retry(stop=stop_after_attempt(2), wait=wait_fixed(1))
+    @retry(stop=stop_after_attempt(2), wait=wait_fixed(1), retry=retry_if_exception_type(TryAgain))
     async def refresh(self, hourly=False) -> BCHydroDailyUsage:
         if not self._is_cache_expired():
             _LOGGER.debug("Returning cached usage")
