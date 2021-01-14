@@ -91,7 +91,7 @@ class BCHydroApi:
 
     def _detect_alert_errors(self, soup: BeautifulSoup):
         try:
-            alert_errors = soup.select('.alert.error:not(.hidden)')
+            alert_errors = soup.select(".alert.error:not(.hidden)")
         except TypeError:
             raise BCHydroInvalidHtmlException()
 
@@ -123,7 +123,6 @@ class BCHydroApi:
                 _LOGGER.debug(debug_msg)
 
             await self.refresh(hourly=hourly)
-
 
     @limits(calls=3, period=FIVE_MINUTES)
     async def _authenticate(self) -> bool:
@@ -189,7 +188,11 @@ class BCHydroApi:
 
         return True
 
-    @retry(stop=stop_after_attempt(2), wait=wait_fixed(1), retry=retry_if_exception_type(TryAgain))
+    @retry(
+        stop=stop_after_attempt(2),
+        wait=wait_fixed(1),
+        retry=retry_if_exception_type(TryAgain),
+    )
     async def refresh(self, hourly=False) -> BCHydroDailyUsage:
         if not self._is_cache_expired():
             _LOGGER.debug("Returning cached usage")
