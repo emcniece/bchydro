@@ -1,0 +1,27 @@
+name: Pull Request
+on:
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@master
+    - name: Set up Python
+      uses: actions/setup-python@v1
+      with:
+        python-version: 3.8
+    - name: Install reqs
+      run: pip install -r requirements.txt
+    - name: Run test.py 
+      run: python test.py
+      env:
+        BCH_USER: ${{ secrets.bch_user }}
+        BCH_PASS: ${{ secrets.bch_pass }}
+
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+      - uses: psf/black@stable
