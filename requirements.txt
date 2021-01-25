@@ -9,7 +9,7 @@ async-timeout==3.0.1      # via aiohttp
 asyncache==0.1.1          # via bchydro (setup.py)
 attrs==20.3.0             # via aiohttp
 beautifulsoup4==4.9.3     # via bchydro (setup.py)
-cachetools==4.2.0         # via asyncache
+cachetools==4.2.1         # via asyncache
 chardet==3.0.4            # via aiohttp
 idna==3.1                 # via yarl
 multidict==5.1.0          # via aiohttp, yarl
