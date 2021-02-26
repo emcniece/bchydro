@@ -4,7 +4,7 @@
 #
 #    pip-compile
 #
-aiohttp==3.7.3            # via bchydro (setup.py)
+aiohttp==3.7.4            # via bchydro (setup.py)
 async-timeout==3.0.1      # via aiohttp
 asyncache==0.1.1          # via bchydro (setup.py)
 attrs==20.3.0             # via aiohttp
