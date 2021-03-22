@@ -15,7 +15,7 @@ idna==3.1                 # via yarl
 multidict==5.1.0          # via aiohttp, yarl
 ratelimit==2.2.1          # via bchydro (setup.py)
 six==1.15.0               # via tenacity
-soupsieve==2.1            # via beautifulsoup4
+soupsieve==2.2.1            # via beautifulsoup4
 tenacity==6.3.1           # via bchydro (setup.py)
 typing-extensions==3.7.4.3  # via aiohttp, yarl
 yarl==1.6.3               # via aiohttp
