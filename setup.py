@@ -28,7 +28,7 @@ setup(
     install_requires=[
         "aiohttp<=3.7.3",
         "beautifulsoup4<=4.9.3",
-        "tenacity<=6.3.1",
+        "tenacity<8.0.2",
         "ratelimit<=2.2.1",
     ],
     classifiers=[
