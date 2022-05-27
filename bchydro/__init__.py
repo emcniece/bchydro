@@ -1,6 +1,7 @@
 """BCHydro API"""
 
 from bchydro.api import BCHydroApi
+from bchydro.api2 import BCHydroApi2
 
 from bchydro.types import BCHydroRates
 from bchydro.types import BCHydroInterval
