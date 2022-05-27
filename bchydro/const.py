@@ -22,3 +22,6 @@ URL_POST_CONSUMPTION_XML = "https://app.bchydro.com/evportlet/web/consumption-da
 
 # Time constants in seconds
 FIVE_MINUTES = 300
+
+
+URL_LOGIN_PAGE = "https://app.bchydro.com/BCHCustomerPortal/web/login.html"
