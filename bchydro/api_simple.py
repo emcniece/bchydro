@@ -18,9 +18,13 @@ class BCHydroApiSimple:
     def __init__(
         self, username: str, password: str, browser_exec_path: Optional[str] = None
     ):
-        """
+        """BC Hydro data accessor through headless browser.
 
-        Username and password aren't stored, but are used to authenticate with BCHydro.
+        *Note* that username and password are stored in the object.
+        Be sure you trust the environment where this object is created and instance is executed.
+
+        Reduce your risks by creating a read-only BCHydro account following
+        https://github.com/emcniece/bchydro?tab=readme-ov-file#-read-only-account-sharing.
 
         Args:
             username (str): BCHydro username
