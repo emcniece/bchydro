@@ -99,7 +99,7 @@ class BCHydroApiSimple:
 
         return table
 
-    def __parse_consumption_table(self, html_table: str) -> dict[str, dict]:
+    def __parse_consumption_table(self, html_table: str):
         """Parse the consumption table from the HTML content.
 
         Converts <table>...</table> HTML content to a dictionary.
