@@ -25,3 +25,9 @@ FIVE_MINUTES = 300
 
 
 URL_LOGIN_PAGE = "https://app.bchydro.com/BCHCustomerPortal/web/login.html"
+
+# Period constants
+ENUM_CURRENT_BILLING_PERIOD = "Current billing period"
+ENUM_LAST_BILLING_PERIOD = "Last billing period"
+ENUM_LAST_7_DAYS = "Last 7 days"
+ENUM_LAST_30_DAYS = "Last 30 days"

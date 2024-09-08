@@ -7,11 +7,25 @@ from typing import Optional
 from bs4 import BeautifulSoup
 from pyppeteer import launch
 
-from .const import URL_LOGIN_PAGE
+
+from .const import (
+    URL_LOGIN_PAGE,
+    ENUM_LAST_7_DAYS,
+    ENUM_CURRENT_BILLING_PERIOD,
+    ENUM_LAST_BILLING_PERIOD,
+    ENUM_LAST_30_DAYS,
+)
 
 LOGLEVEL = os.environ.get("LOGLEVEL", "WARNING").upper()
 logger = logging.getLogger(__name__)
 logger.setLevel(LOGLEVEL)
+
+supported_periods = (
+    ENUM_CURRENT_BILLING_PERIOD,
+    ENUM_LAST_BILLING_PERIOD,
+    ENUM_LAST_7_DAYS,
+    ENUM_LAST_30_DAYS,
+)
 
 
 class BCHydroApiSimple:
@@ -65,12 +79,12 @@ class BCHydroApiSimple:
                 self.page = await self._sign_in(
                     self._username, self._password, self.browser_exec_path
                 )
-            await func(self, *args, **kwargs)
+            return await func(self, *args, **kwargs)
 
         return wrapper
 
     @_authenticated
-    async def get_usage_table(self):
+    async def get_usage_table(self, period: str = ENUM_CURRENT_BILLING_PERIOD):
         # Navigate to Consumption page by clicking button:
         logger.debug("Clicking Detailed Consumption button...")
         await self.page.waitForSelector("#detailCon:not([disabled])")
@@ -90,6 +104,22 @@ class BCHydroApiSimple:
         # Wait until the table with id="consumptionTable" is present
         await self.page.waitForSelector("table#consumptionTable")
 
+        if period != ENUM_CURRENT_BILLING_PERIOD and period in supported_periods:
+            await self.page.waitForSelector("span#dateSelect-button")
+            await self.page.click("span#dateSelect-button")
+
+            # Wait until the dropdown is present
+            await self.page.waitForSelector("div.ui-menu-item-wrapper")
+            options = await self.page.querySelectorAll("div.ui-menu-item-wrapper")
+            for option in options:
+                text = await self.page.evaluate("(el) => el.textContent", option)
+                if text == period:
+                    await option.click()
+                    break
+
+            # Wait until the table with id="consumptionTable" is present after changing the table
+            await self.page.waitForSelector("table#consumptionTable")
+
         # Download the whole table at id="consumptionTable"
         html_table = await self.page.evaluate(
             "document.querySelector('table#consumptionTable').outerHTML"
@@ -98,8 +128,6 @@ class BCHydroApiSimple:
             f.write(html_table)
 
         table = self.__parse_consumption_table(html_table)
-        print("WIthin")
-        print(table)
 
         return table
 

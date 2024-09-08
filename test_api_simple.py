@@ -3,13 +3,15 @@ import asyncio
 import os
 
 from bchydro import BCHydroApiSimple
+from bchydro.const import ENUM_LAST_7_DAYS
 
 
 async def main(bep=None):
     client = BCHydroApiSimple(
         os.environ.get("BCH_USER"), os.environ.get("BCH_PASS"), browser_exec_path=bep
     )
-    usage = await client.get_usage_table()
+    usage = await client.get_usage_table(period=ENUM_LAST_7_DAYS)
+
     print(usage)
 
 
