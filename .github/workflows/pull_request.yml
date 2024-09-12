@@ -16,8 +16,8 @@ jobs:
     - name: Run test.py 
       run: python test.py
       env:
-        BCH_USER: ${{ secrets.bch_user }}
-        BCH_PASS: ${{ secrets.bch_pass }}
+        BCH_USER: ${{ secrets.BCH_USER }}
+        BCH_PASS: ${{ secrets.BCH_PASS }}
 
   lint:
     runs-on: ubuntu-latest
