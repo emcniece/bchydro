@@ -25,5 +25,5 @@ tqdm==4.64.0              # via pyppeteer
 typing-extensions==3.7.4.3  # via aiohttp, importlib-metadata, yarl
 urllib3==1.26.9           # via pyppeteer
 websockets==10.3          # via pyppeteer
-yarl==1.6.3               # via aiohttp
+yarl==1.11.1               # via aiohttp
 zipp==3.8.0               # via importlib-metadata
