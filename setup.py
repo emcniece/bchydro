@@ -30,7 +30,13 @@ setup(
         "beautifulsoup4<=4.9.3",
         "tenacity<=6.3.1",
         "ratelimit<=2.2.1",
+        "pyppeteer<=1.0.2",
     ],
+    extras_require={
+        "dev": [
+            "pip-tools<=7.4.1",
+        ],
+    },
     classifiers=[
         "Development Status :: 3 - Alpha",
         "Intended Audience :: Developers",
