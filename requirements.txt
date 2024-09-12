@@ -10,7 +10,7 @@ async-timeout==3.0.1      # via aiohttp
 attrs==20.3.0             # via aiohttp
 beautifulsoup4==4.9.3     # via bchydro (setup.py)
 cachetools==4.2.2         # via asyncache
-certifi==2021.10.8        # via pyppeteer
+certifi==2024.8.30        # via pyppeteer
 chardet==3.0.4            # via aiohttp
 idna==3.1                 # via yarl
 importlib-metadata==4.11.3  # via pyppeteer
