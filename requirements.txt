@@ -20,7 +20,7 @@ pyppeteer==1.0.2          # via bchydro (setup.py)
 ratelimit==2.2.1          # via bchydro (setup.py)
 six==1.15.0               # via tenacity
 soupsieve==2.2.1            # via beautifulsoup4
-tenacity==6.3.1           # via bchydro (setup.py)
+tenacity==9.0.0           # via bchydro (setup.py)
 tqdm==4.64.0              # via pyppeteer
 typing-extensions==3.7.4.3  # via aiohttp, importlib-metadata, yarl
 urllib3==1.26.9           # via pyppeteer
