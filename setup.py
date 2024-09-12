@@ -28,7 +28,7 @@ setup(
     install_requires=[
         "aiohttp<3.7.5",
         "beautifulsoup4<=4.9.3",
-        "tenacity<=6.3.1",
+        "tenacity<=9.0.0",
         "ratelimit<=2.2.1",
         "pyppeteer<=1.0.2",
     ],
