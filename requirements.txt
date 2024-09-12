@@ -13,7 +13,7 @@ cachetools==4.2.2         # via asyncache
 certifi==2021.10.8        # via pyppeteer
 chardet==3.0.4            # via aiohttp
 idna==3.1                 # via yarl
-importlib-metadata==4.11.3  # via pyppeteer
+importlib-metadata==8.5.0  # via pyppeteer
 multidict==5.1.0          # via aiohttp, yarl
 pyee==8.2.2               # via pyppeteer
 pyppeteer==1.0.2          # via bchydro (setup.py)
