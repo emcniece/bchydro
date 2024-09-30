@@ -26,7 +26,7 @@ setup(
     download_url=f"{repo_url}/releases/latest/download/package.tar.gz",
     keywords=["bchydro"],
     install_requires=[
-        "aiohttp<3.7.5",
+        "aiohttp<3.10.9",
         "beautifulsoup4<=4.9.3",
         "tenacity<=6.3.1",
         "ratelimit<=2.2.1",
